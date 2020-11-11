@@ -15,7 +15,7 @@ namespace konTEXT.Renderer
             var sb = new StringBuilder();
 
             sb.AppendLine("@startuml");//desc start
-            sb.AppendFormat("package {0} {1}", classModel.NamespaceDeclarationSyntax.Name, BackgroundColor).Append("{").AppendLine();//namespace start
+            sb.AppendFormat("Frame {0} {1}", classModel.NamespaceDeclarationSyntax.Name, BackgroundColor).Append("{").AppendLine();//namespace start
             AddBaseObjects(classModel, sb);
             sb.AppendFormat("class {0} ", classModel.ClassDeclarationSyntax.Identifier.ValueText).Append("{").AppendLine();//class start
             AddConstructors(classModel, sb);
@@ -99,7 +99,6 @@ namespace konTEXT.Renderer
                         sb.AppendFormat("{0}{1}", e.Current.Modifiers.GetUmlModifiers(), e.Current.Declaration)
                             .AppendLine();
                     }
-
                 }
             }
         }
@@ -120,7 +119,7 @@ namespace konTEXT.Renderer
                             allowCaption = false;
                         }
 
-                        sb.AppendFormat("{0}{1}", e.Current.Modifiers.GetUmlModifiers(), e.Current.Identifier)
+                        sb.AppendFormat("{0} {1} {2}", e.Current.Modifiers.GetUmlModifiers(), e.Current.Type, e.Current.Identifier)
                             .AppendLine();
                     }
 
