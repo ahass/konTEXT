@@ -14,7 +14,7 @@
 
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 
-        <Image x:Name="UmlImage" Stretch="None" Margin="50"
+        <Image x:Name="UmlImage" Stretch="None" Margin="50" MouseUp="UmlImage_OnMouseUp"
                HorizontalAlignment="Center" 
                VerticalAlignment="Top" 
                Source="{Binding UmlOutput, 
