@@ -36,7 +36,7 @@ namespace konTEXT
 
         private void UmlImage_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog
+            var saveFileDialog = new SaveFileDialog
             {
                 Filter = "PNG Image|*.png",
                 Title = "Save an Image File",

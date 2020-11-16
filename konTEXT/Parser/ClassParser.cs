@@ -32,7 +32,7 @@ namespace konTEXT.Parser
 
                 var constructorSyntax = classSyntax.Members.OfType<ConstructorDeclarationSyntax>();
 
-                var eventSyntax = classSyntax.Members.OfType<EventDeclarationSyntax>();
+                var eventSyntax = classSyntax.Members.OfType<EventFieldDeclarationSyntax>();
 
                 var enumSyntax = classSyntax.Members.OfType<EnumDeclarationSyntax>();
                 

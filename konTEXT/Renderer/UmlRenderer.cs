@@ -2,7 +2,6 @@
 using System.Text;
 using konTEXT.Tools;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.VisualStudio.Debugger.Interop;
 
 namespace konTEXT.Renderer
 {
@@ -19,11 +18,11 @@ namespace konTEXT.Renderer
             AddBaseObjects(classModel, sb);
             sb.AppendFormat("class {0} ", classModel.ClassDeclarationSyntax.Identifier.ValueText).Append("{").AppendLine();//class start
             AddConstructors(classModel, sb);
-            AddEvents(classModel, sb);
+            AddEnums(classModel, sb);
             AddFields(classModel, sb);
             AddProps(classModel, sb);
             AddMethods(classModel, sb);
-            AddEnums(classModel, sb);
+            AddEvents(classModel, sb);
 
             sb.AppendLine("}");//class close
             sb.AppendLine("}");//namespace close
@@ -39,7 +38,7 @@ namespace konTEXT.Renderer
             {
                 foreach (var baseType in classModel.ClassDeclarationSyntax.BaseList.Types)
                 {
-                    if (baseType.Type.ToString().StartsWith("I"))
+                    if (baseType.Type.ToString().StartsWith("I")) //todo improve interface recognition
                     {
                         sb.AppendFormat("class {0} implements {1}", classModel.ClassDeclarationSyntax.Identifier.ValueText, (baseType.Type.ToString())).AppendLine();
                     }
@@ -77,7 +76,25 @@ namespace konTEXT.Renderer
         
         private static void AddEvents(ClassModel classModel, StringBuilder sb)
         {
-            //Todo add events
+            using (var e = classModel.EventDeclarationSyntax.GetEnumerator())
+            {
+                var allowCaption = true;
+
+                while (e.MoveNext().Equals(true))
+                {
+                    if (e.Current != null)
+                    {
+                        if (allowCaption)
+                        {
+                            sb.AppendLine(".. Events ..");
+                            allowCaption = false;
+                        }
+
+                        sb.AppendFormat("{0} {1}", e.Current.Modifiers.GetUmlModifiers(), e.Current.Declaration)
+                            .AppendLine();
+                    }
+                }
+            }
         }
 
         private static void AddFields(ClassModel classModel, StringBuilder sb)
@@ -96,7 +113,8 @@ namespace konTEXT.Renderer
                             allowCaption = false;
                         }
 
-                        sb.AppendFormat("{0}{1}", e.Current.Modifiers.GetUmlModifiers(), e.Current.Declaration)
+                        sb.AppendFormat("{0}{1}", e.Current.Modifiers.GetUmlModifiers(), 
+                                e.Current.Declaration.ToString().Split('=')[0].TrimEnd())
                             .AppendLine();
                     }
                 }
@@ -119,7 +137,10 @@ namespace konTEXT.Renderer
                             allowCaption = false;
                         }
 
-                        sb.AppendFormat("{0} {1} {2}", e.Current.Modifiers.GetUmlModifiers(), e.Current.Type, e.Current.Identifier)
+                        sb.AppendFormat("{0} {1} {2}", 
+                                e.Current.Modifiers.GetUmlModifiers(), 
+                                e.Current.Type, 
+                                e.Current.Identifier)
                             .AppendLine();
                     }
 
@@ -143,7 +164,10 @@ namespace konTEXT.Renderer
                             allowCaption = false;
                         }
 
-                        sb.AppendFormat("{0}{1} {2}", e.Current.Modifiers.GetUmlModifiers(), e.Current.ReturnType, e.Current.Identifier)
+                        sb.AppendFormat("{0}{1} {2}", 
+                                e.Current.Modifiers.GetUmlModifiers(), 
+                                e.Current.ReturnType, 
+                                e.Current.Identifier)
                             .Append("()").AppendLine();
                     }
 
@@ -153,7 +177,28 @@ namespace konTEXT.Renderer
 
         private static void AddEnums(ClassModel classModel, StringBuilder sb)
         {
-            //Todo add enums
+            using (var e = classModel.EnumDeclarationSyntax.GetEnumerator())
+            {
+                var allowCaption = true;
+
+                while (e.MoveNext().Equals(true))
+                {
+                    if (e.Current != null)
+                    {
+                        if (allowCaption)
+                        {
+                            sb.AppendLine(".. Enums ..");
+                            allowCaption = false;
+                        }
+
+                        sb.AppendFormat("{0} {1} {2}",
+                                e.Current.Modifiers.GetUmlModifiers(),
+                                e.Current.EnumKeyword,
+                                e.Current.Identifier)
+                            .AppendLine();
+                    }
+                }
+            }
         }
     }
 }

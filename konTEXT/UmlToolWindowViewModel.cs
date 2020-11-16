@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
@@ -21,24 +22,31 @@ namespace konTEXT
     public class UmlToolWindowViewModel : INotifyPropertyChanged
     {
         public UmlToolWindowViewModel()
-        {
+        {            
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var fileCode = GetFileContent();
-
-            if (fileCode.Equals(string.Empty)) return;
-
-            var classCode = ClassParser.Parse(fileCode);
-
-            var plantCode = UmlRenderer.Render(classCode);
-
-            var renderFactory = new PlantUml.Net.RendererFactory();
-
-            var plantUmlRenderer = renderFactory.CreateRenderer();
-
-            using (var mStream = new MemoryStream(plantUmlRenderer.Render(plantCode, OutputFormat.Png)))
+            try
             {
-                UmlOutput = BitmapFrame.Create(mStream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                var fileCode = GetFileContent();
+
+                if (fileCode.Equals(string.Empty)) return;
+
+                var classCode = ClassParser.Parse(fileCode);
+
+                var plantCode = UmlRenderer.Render(classCode);
+
+                var renderFactory = new PlantUml.Net.RendererFactory();
+
+                var plantUmlRenderer = renderFactory.CreateRenderer();
+
+                using (var mStream = new MemoryStream(plantUmlRenderer.Render(plantCode, OutputFormat.Png)))
+                {
+                    UmlOutput = BitmapFrame.Create(mStream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+                }
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine(e);
             }
         }
 
