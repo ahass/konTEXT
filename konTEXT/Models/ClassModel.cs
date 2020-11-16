@@ -22,7 +22,7 @@ namespace konTEXT.Models
         
         public IEnumerable<ConstructorDeclarationSyntax> ConstructorDeclarationSyntax { get; set; }
         
-        public IEnumerable<EventDeclarationSyntax> EventDeclarationSyntax { get; set; }
+        public IEnumerable<EventFieldDeclarationSyntax> EventDeclarationSyntax { get; set; }
 
         public IEnumerable<EnumDeclarationSyntax> EnumDeclarationSyntax { get; set; }
 
